@@ -10,7 +10,13 @@ export default function Home() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`http://localhost:8000/generate-qr/?url=${url}`);
+      // Send the request with the URL as a query parameter
+      const response = await axios.post(`http://localhost:8000/generate-qr/`, null, {
+        params: {
+          url: url  // Send the URL as a query parameter
+        }
+      });
+      // Set the QR code URL from the response
       setQrCodeUrl(response.data.qr_code_url);
     } catch (error) {
       console.error('Error generating QR Code:', error);
@@ -77,5 +83,7 @@ const styles = {
   },
   qrCode: {
     marginTop: '20px',
+    width: '200px', // Adjust the size as needed
+    height: '200px', // Adjust the size as needed
   },
 };
