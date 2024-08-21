@@ -29,7 +29,7 @@ s3 = boto3.client(
     aws_access_key_id= os.getenv("AWS_ACCESS_KEY"),
     aws_secret_access_key= os.getenv("AWS_SECRET_KEY"))
 
-bucket_name = 'YOUR_BUCKET_NAME' # Add your bucket name here
+bucket_name = os.getenv("AWS_S3_BUCKET_NAME")
 
 @app.post("/generate-qr/")
 async def generate_qr(url: str):
@@ -52,14 +52,14 @@ async def generate_qr(url: str):
 
     # Generate file name for S3
     file_name = f"qr_codes/{url.split('//')[-1]}.png"
-
+    print(file_name)
     try:
         # Upload to S3
-        s3.put_object(Bucket=bucket_name, Key=file_name, Body=img_byte_arr, ContentType='image/png', ACL='public-read')
+        s3.put_object(Bucket=bucket_name, Key=file_name, Body=img_byte_arr, ContentType='image/png', ACL='public-read-write')
         
         # Generate the S3 URL
         s3_url = f"https://{bucket_name}.s3.amazonaws.com/{file_name}"
         return {"qr_code_url": s3_url}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print(e)
     
